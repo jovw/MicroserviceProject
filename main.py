@@ -1,7 +1,7 @@
 from tkinter import *
 import customtkinter as ctk
-import config
 from sidebar import Sidebar
+from header import Header
 
 class App(ctk.CTk):
     def __init__(self):
@@ -20,6 +20,13 @@ class App(ctk.CTk):
         self.sidebar = Sidebar(self, self.sidebar_button_event, self.change_appearance_mode_event, self.change_scaling_event)
         self.sidebar.grid(row=0, column=0, rowspan=4, sticky="nsew")
 
+        #######################################
+        
+        # Create header (Description and tip)
+        self.header = Header(self)
+        self.header.grid(row=0, column=1, columnspan=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
+
+
     def change_appearance_mode_event(self, new_appearance_mode: str):
         ctk.set_appearance_mode(new_appearance_mode)
 
@@ -30,41 +37,6 @@ class App(ctk.CTk):
     def sidebar_button_event(self):
         print("sidebar_button click")
 
-        # Create main content area
-        # self.content = Content(self)
-        # self.content.grid(row=0, column=1, columnspan=1, padx=(20, 20), pady=(20, 20), sticky="nsew")
-        
-        # Main descriptoin and tip frame
-        self.toprow = ctk.CTkFrame(self, 
-                                        corner_radius=10,
-                                        fg_color="#282828"
-                                        )
-        self.toprow.grid(
-                row=0, 
-                column=1, 
-                columnspan=1, 
-                padx=(20, 20), 
-                pady=(20, 20), 
-                sticky="nsew",)
-        self.toprow.grid_rowconfigure(2, weight=1)
-        self.toprow.columnconfigure(1, weight=1)
-        
-
-        self.description = ctk.CTkLabel(self.toprow,
-                                text="Stay ahead of the weather with our user-friendly app, providing real-time \n forecasts and updates for your location.",
-                                font=ctk.CTkFont(size=20, weight="bold"),
-                                )
-        self.description.grid(row=0, column=0, pady=(20, 10), padx=(20, 20))
-
-        self.tip = ctk.CTkLabel(self.toprow,
-                        text="Enter your location to see current weather predictions for the day \n Up to date predictions such as temp, precipitation, wind, sunrise and sunset",
-                        font=ctk.CTkFont(size=15),
-                        fg_color="#3f3f3f",
-                        padx=20,
-                        pady=20,
-                        corner_radius=15
-                        )
-        self.tip.grid(row=1, column=0, pady=(20, 20), padx=(20, 20))
 
         #         ##############################################
                 

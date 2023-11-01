@@ -62,13 +62,27 @@ class WeatherOutput(ctk.CTkFrame):
             self._create_daily_forecast_tab(weather_tabview.tab(day))
 
     def _create_daily_forecast_tab(self, parent):
+        # Configure parent to expand rows and columns
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
+        
         daily_forecast_container = ctk.CTkFrame(parent, fg_color="#3f3f3f")
-        daily_forecast_container.grid(row=0, pady=(15, 15), padx=(15, 15))
+        daily_forecast_container.grid(row=0, column=0, pady=(15, 15), padx=(15, 15), sticky="nsew")
+        
+        # Allow the container to expand both vertically and horizontally
         daily_forecast_container.grid_rowconfigure(0, weight=1)
-        daily_forecast_container.grid_columnconfigure(1, weight=0)  # Left and right spacers
+        daily_forecast_container.grid_columnconfigure(0, weight=1) # Left spacer
+        daily_forecast_container.grid_columnconfigure(1, weight=1) # Main content
+        daily_forecast_container.grid_columnconfigure(2, weight=1) # Right spacer
 
-        daily_forecast_frame = ctk.CTkFrame(daily_forecast_container, fg_color="#000000") # 3f3f3f The main frame inside container
-        daily_forecast_frame.grid(row=0)
+        # Center the frame in the middle column of the container
+        daily_forecast_frame = ctk.CTkFrame(daily_forecast_container, fg_color="#3f3f3f")
+        daily_forecast_frame.grid(row=0, column=1, sticky="nsew")  # Position it in the middle column
+
+        # Configure multiple columns inside daily_forecast_frame for centering
+        daily_forecast_frame.grid_columnconfigure(0, weight=1)  # Left spacer
+        daily_forecast_frame.grid_columnconfigure(1, weight=1)  # Main content
+        daily_forecast_frame.grid_columnconfigure(2, weight=1)  # Right spacer
 
         self._create_overview_section(daily_forecast_frame)
         self._create_preciptation_section(daily_forecast_frame)
@@ -79,7 +93,7 @@ class WeatherOutput(ctk.CTkFrame):
     def _create_overview_section(self, parent):
         over_view = ctk.CTkFrame(parent, fg_color="#3f3f3f")
         # Position in the center column with east-west sticky
-        over_view.grid(row=0, column=2)  
+        over_view.grid(row=0, columnspan=3, column=1, pady=(0,0), padx=(0,0))  
         
         # Configure grid inside the overview
         over_view.grid_rowconfigure(3, weight=0)
@@ -94,7 +108,7 @@ class WeatherOutput(ctk.CTkFrame):
 
     def _create_preciptation_section(self, parent):
         precip = ctk.CTkFrame(parent, fg_color="#3f3f3f")
-        precip.grid(row=1, columnspan=3, column=1, pady=(20,0), padx=(20,20))
+        precip.grid(row=1, columnspan=3, column=1, pady=(20,0), padx=(0,0))
         precip.grid_columnconfigure([0, 1], weight=1)  # Evenly spaced
         
         rain_precip = ctk.CTkFrame(precip, fg_color="#575757")

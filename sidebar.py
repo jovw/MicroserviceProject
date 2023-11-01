@@ -2,7 +2,7 @@ import customtkinter as ctk
 
 class Sidebar(ctk.CTkFrame):
     def __init__(self, parent, sidebar_button_event, change_appearance_mode_event, change_scaling_event):
-        super().__init__(parent, width=140, corner_radius=0, fg_color="#3f3f3f")
+        super().__init__(parent, width=140, corner_radius=0, fg_color="#3f3f3f", bg_color="#121212")
         self.parent = parent
         self.sidebar_button_event = sidebar_button_event
         self.change_appearance_mode_event = change_appearance_mode_event

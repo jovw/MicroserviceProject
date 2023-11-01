@@ -3,7 +3,9 @@ import customtkinter as ctk
 
 class Header(ctk.CTkFrame):
     def __init__(self, parent):
-        super().__init__(parent, corner_radius=10, fg_color="#282828")
+        super().__init__(parent, corner_radius=20, fg_color="#282828", 
+                         bg_color="#121212", 
+                         )
 
         self.grid_rowconfigure(2, weight=1)
         self.columnconfigure(1, weight=1)

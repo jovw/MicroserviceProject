@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 class LocationInput(ctk.CTkFrame):
     def __init__(self, parent):
-        super().__init__(parent, corner_radius=10, fg_color="#282828")
+        super().__init__(parent, corner_radius=20, fg_color="#282828", bg_color="#121212")
         
         # Configure layout
         self.grid_rowconfigure(3, weight=0)

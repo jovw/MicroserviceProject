@@ -20,11 +20,9 @@ class LocationInput(ctk.CTkFrame):
                               )
         header2.grid(row=0, column=0, padx=(15, 15), pady=(15, 15), sticky="nsew")
 
-        # Tabview for different input methods
         self._create_tabview()
-        
-        # Buttons
         self._create_buttons()
+        self._create_error_message()
 
     def _create_tabview(self):
         tabview = ctk.CTkTabview(self, 
@@ -113,10 +111,27 @@ class LocationInput(ctk.CTkFrame):
         long_entry = ctk.CTkEntry(long_frame, placeholder_text="-122.162520842")
         long_entry.grid(row=0, column=1, padx=(15, 15), pady=0)
 
+    def _create_error_message(self):
+        error_msg = ctk.CTkFrame(self, fg_color="#121212")
+        error_msg.grid(row=2, padx=(20, 20), pady=(0, 20), sticky="nsew")
+        error_msg.grid_rowconfigure(2, weight=1)
+
+        #error Label
+        error_label = ctk.CTkLabel(error_msg, text="❗Something went wrong",
+                                   font=ctk.CTkFont(size=15, weight="bold"),
+                                   text_color="#ED6647")
+        error_label.grid(row=0, padx=(10, 0), pady=(10,0), sticky="w")
+        # error message
+        error_message = ctk.CTkLabel(error_msg, text="This is wehre the user friendly error would go. \nI am going to determine the error msg based on response form API call",
+                                     anchor="w",
+                                     justify=LEFT,
+                                     text_color="#ED6647")
+        error_message.grid(row=1, padx=(15, 0), pady=(0,15), sticky="w")
+
     def _create_buttons(self):
         # Buttons
         button_frame = ctk.CTkFrame(self, fg_color="#282828")
-        button_frame.grid(row=2, padx=(20, 20), pady=(0, 20), sticky="nsew")
+        button_frame.grid(row=3, padx=(20, 20), pady=(0, 20), sticky="nsew")
         button_frame.grid_rowconfigure(0, weight=0)
         button_frame.grid_columnconfigure(3, weight=1)
 

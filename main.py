@@ -30,13 +30,14 @@ class App(ctk.CTk):
 
         ##############################################
         # Weather input frame
-        self.location_input = LocationInput(self)
+        self.weather = WeatherOutput(self)
+        self.location_input = LocationInput(self, self.weather)
         self.location_input.grid(row=1, column=1, columnspan=1, padx=(20, 20), pady=(0, 20), sticky="nsew")
 
         ##############################################
 
         # Main weather frame
-        self.weather = WeatherOutput(self)
+        # self.weather = WeatherOutput(self)
         self.weather.grid(row=2, column=1, columnspan=1, padx=(20, 20), pady=(0, 20), sticky="nsew")
 
     def change_appearance_mode_event(self, new_appearance_mode: str):
@@ -52,3 +53,6 @@ class App(ctk.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
+
+    #47.535997856
+    #-122.162520842

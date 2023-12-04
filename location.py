@@ -1,8 +1,9 @@
 from tkinter import *
 import customtkinter as ctk
+from weatherBitMain import *
 
 class LocationInput(ctk.CTkFrame):
-    def __init__(self, parent):
+    def __init__(self, parent, weather_output_instance):
         super().__init__(parent, corner_radius=20, fg_color="#282828", bg_color="#121212")
         
         # Configure layout
@@ -11,6 +12,15 @@ class LocationInput(ctk.CTkFrame):
     
         # Create widgets
         self._create_widgets()
+
+        self.weather_output_instance = weather_output_instance
+
+        self.current_weather = None
+        self.weather_forecast = None
+
+    ### Getter ###
+    def get_current_weather(self):
+        return self.current_weather
         
     def _create_widgets(self):
         # Header
@@ -167,6 +177,8 @@ class LocationInput(ctk.CTkFrame):
                                       font=ctk.CTkFont(size=12, weight="bold"))
         submit_button.grid(row=0, column=2, padx=0, pady=0, sticky="e")
 
+#### Validation Code and Calls to microservice ###
+
     def validate_city_input(self):
         city = self.city_entry.get().strip()
         if not city:
@@ -177,7 +189,16 @@ class LocationInput(ctk.CTkFrame):
             # Clear the error message and proceed with the next steps
             self.error_message.configure(text="")
             # Proceed with the next steps, such as making an API call
-            print(f"Fetching weather data for {city}.")
+            print(f"-----Fetching current weather for {city}.-----")
+            self.current_weather = get_current_weather(city_current=city)
+            # print(f' \n {self.current_weather} \n')
+            print(f"-----Fetching weather forecast for {city}.-----")
+            self.weather_forecast = get_daily_forecast(city_forecast=city)
+            # print(f' \n {self.weather_forecast} \n')
+
+            # set the current weather equal to the returned data
+            self.weather_output_instance.set_current(current=self.current_weather)
+            self.weather_output_instance.set_forecast(forecast=self.weather_forecast)
 
     def validate_postal_code_input(self):
         postal_code = self.code_entry.get().strip()
@@ -196,7 +217,17 @@ class LocationInput(ctk.CTkFrame):
             # Clear the error message and proceed with the next steps
             self.error_message.configure(text="")
             # Proceed with the next steps, such as making an API call
-            print(f"Fetching weather data for {postal_code} in {country}.")
+            print(f"-----Fetching current weather data for {postal_code} in {country}.-----")
+            self.current_weather = get_current_weather(city_current=postal_code)
+            # print(f' \n {self.current_weather} \n')
+            print(f"-----Fetching weather forecast data for {postal_code} in {country}.-----")
+            self.weather_forecast = get_daily_forecast(city_forecast=postal_code)
+            # print(f' \n {self.weather_forecast} \n')
+
+            # set the current weather equal to the returned data
+            self.weather_output_instance.set_current(current=self.current_weather)
+            self.weather_output_instance.set_forecast(forecast=self.weather_forecast)
+            
 
     def validate_coordinates_input(self):
         lat = self.lat_entry.get().strip()
@@ -215,4 +246,13 @@ class LocationInput(ctk.CTkFrame):
             # Clear the error message and proceed with the next steps
             self.error_message.configure(text="")
             # Proceed with the next steps, such as making an API call
-            print(f"Fetching weather data at ({lat}, {lon}).")
+            print(f"-----Fetching current weather data for {lat} in {lon}.-----")
+            self.current_weather = get_current_weather_lon_lat(lon=lon, lat=lat)
+            # print(f' \n {self.current_weather} \n')
+            print(f"-----Fetching weather forecast data for {lat} in {lon}.-----")
+            self.weather_forecast = get_daily_forecast_lon_lat(lon=lon, lat=lat)
+            # print(f' \n {self.weather_forecast} \n')
+
+            # set the current weather equal to the returned data
+            self.weather_output_instance.set_current(current=self.current_weather)
+            self.weather_output_instance.set_forecast(forecast=self.weather_forecast)

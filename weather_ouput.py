@@ -4,12 +4,23 @@ class WeatherOutput(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent, fg_color="#282828", bg_color="#121212", corner_radius=20)
 
+        self.current = None
+        self.forecast = None
         # Configure layout
         self.grid_rowconfigure(3, weight=0)
         self.grid_columnconfigure(1, weight=0)
         
         # Create widgets
         self._create_widgets()
+
+    def set_current(self, current):
+        self.current = current
+        self._update_current_weather_widget()
+        # print(self.current)
+    
+    def set_forecast(self, forecast):
+        self.forecast = forecast
+        self._update_forecast_weather_widget()
 
     def _create_widgets(self):
         # Current Weather
@@ -18,29 +29,44 @@ class WeatherOutput(ctk.CTkFrame):
         # Forecast Weather Tabs
         self._create_forecast_tabs()
 
+    #### CURRENT WEATHER ####
     def _create_current_weather(self):
         current_frame = ctk.CTkFrame(self, fg_color="#282828")
         current_frame.grid(row=0, pady=(20, 20))
         current_frame.grid_rowconfigure(4, weight=0)
         current_frame.grid_columnconfigure(1, weight=0)
 
-        # Location Name
-        locationName = ctk.CTkLabel(current_frame, text='Snoqualmie',
+        self.locationName = ctk.CTkLabel(current_frame, text='Issaquah',
                                     font=ctk.CTkFont(size=20, weight="bold"))
-        locationName.grid(row=0)
+        self.locationName.grid(row=0)
         # Current Temp
-        tempCurrent = ctk.CTkLabel(current_frame, text='47°F',
+        self.tempCurrent = ctk.CTkLabel(current_frame, text='47°F',
                                    font=ctk.CTkFont(size=40, weight="normal"))
-        tempCurrent.grid(row=1)
+        self.tempCurrent.grid(row=1)
         # Condition
-        condition = ctk.CTkLabel(current_frame, text='Partly Cloudy',
+        self.condition = ctk.CTkLabel(current_frame, text='Partly Cloudy',
                                  font=ctk.CTkFont(size=15, weight="bold"))
-        condition.grid(row=2)
+        self.condition.grid(row=2)
         # High/Low temp
-        temp = ctk.CTkLabel(current_frame, text='H:5°F  L:28°F',
+        self.temp = ctk.CTkLabel(current_frame, text='H:5°F  L:28°F',
                             font=ctk.CTkFont(size=15, weight="bold"))
-        temp.grid(row=3)
+        self.temp.grid(row=3)
+    
+    def _update_current_weather_widget(self):
+        if self.current is None and 'data' not in self.current and len(self.current['data']) == 0:
+            print('Something went wrong when entering location')
+            return
+        
+        new_loc_name = self.current['data'][0]['city_name']
+        new_temp = str(self.current['data'][0]['app_temp']) + '°F'
+        new_condition = self.current['data'][0]['weather']['description']
+        
+        self.locationName.configure(text=new_loc_name)
+        self.tempCurrent.configure(text=new_temp)
+        self.condition.configure(text=new_condition)
+        self.locationName.update()
 
+    ### FORECAST WEATHER ###
     def _create_forecast_tabs(self):
         weather_tabview = ctk.CTkTabview(self, 
                                          width=700,
@@ -56,7 +82,7 @@ class WeatherOutput(ctk.CTkFrame):
         weather_tabview.grid_rowconfigure(2, weight=0)
         weather_tabview.grid_columnconfigure(1, weight=0)
 
-        for i in range(1, 11):
+        for i in range(1, 8):
             day = f"Day {i}"
             weather_tabview.add(day)
             self._create_daily_forecast_tab(weather_tabview.tab(day))
@@ -224,7 +250,18 @@ class WeatherOutput(ctk.CTkFrame):
                                       font=ctk.CTkFont(size=10, weight="normal"))
         gust_speed_mph.grid(row=0, column=1)
 
-
+    def _update_forecast_weather_widget(self):
+        if self.forecast is None and 'data' not in self.forecast and len(self.forecast['data']) == 0:
+            print('Something went wrong when entering location')
+            return
+        
+        ## updating the current max and min here becasue it comes back in the forecast data nd not in
+        # the current weahter data
+        new_current_max = self.forecast['data'][0]['max_temp']
+        new_current_min = self.forecast['data'][0]['min_temp']
+        new_current_min_max = f'H:{new_current_max}°F  L:{new_current_min}°F'
+        
+        self.temp.configure(text=new_current_min_max)
 
 
 

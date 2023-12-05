@@ -1,4 +1,5 @@
 import customtkinter as ctk
+from datetime import datetime
 
 class WeatherOutput(ctk.CTkFrame):
     def __init__(self, parent):
@@ -6,6 +7,8 @@ class WeatherOutput(ctk.CTkFrame):
 
         self.current = None
         self.forecast = None
+        self.forecast_tabs = []
+
         # Configure layout
         self.grid_rowconfigure(3, weight=0)
         self.grid_columnconfigure(1, weight=0)
@@ -85,7 +88,8 @@ class WeatherOutput(ctk.CTkFrame):
         for i in range(1, 8):
             day = f"Day {i}"
             weather_tabview.add(day)
-            self._create_daily_forecast_tab(weather_tabview.tab(day))
+            tab_widgets = self._create_daily_forecast_tab(weather_tabview.tab(day))
+            self.forecast_tabs.append((day, tab_widgets))  # Store tab reference
 
     def _create_daily_forecast_tab(self, parent):
         # Configure parent to expand rows and columns
@@ -110,11 +114,21 @@ class WeatherOutput(ctk.CTkFrame):
         daily_forecast_frame.grid_columnconfigure(1, weight=1)  # Main content
         daily_forecast_frame.grid_columnconfigure(2, weight=1)  # Right spacer
 
-        self._create_overview_section(daily_forecast_frame)
-        self._create_preciptation_section(daily_forecast_frame)
-        self._create_sun_section(daily_forecast_frame)
-        self._create_other_section(daily_forecast_frame)
-        self._create_wind_section(daily_forecast_frame)
+        # self._create_overview_section(daily_forecast_frame)
+        # self._create_preciptation_section(daily_forecast_frame)
+        # self._create_sun_section(daily_forecast_frame)
+        # self._create_other_section(daily_forecast_frame)
+        # self._create_wind_section(daily_forecast_frame)
+
+        # Collect widgets from helper methods
+        forecast_widgets = {}
+        forecast_widgets.update(self._create_overview_section(daily_forecast_frame))
+        forecast_widgets.update(self._create_preciptation_section(daily_forecast_frame))
+        forecast_widgets.update(self._create_sun_section(daily_forecast_frame))
+        forecast_widgets.update(self._create_other_section(daily_forecast_frame))
+        forecast_widgets.update(self._create_wind_section(daily_forecast_frame))
+
+        return forecast_widgets
 
     def _create_overview_section(self, parent):
         over_view = ctk.CTkFrame(parent, fg_color="#3f3f3f")
@@ -131,6 +145,12 @@ class WeatherOutput(ctk.CTkFrame):
         over_view_condition.grid(row=2, column=0)
         over_view_temp = ctk.CTkLabel(over_view, text="H:50.4°F  L:30.6°F")
         over_view_temp.grid(row=3, column=0)
+
+        return {
+            "over_view_date_label": over_view_date,
+            "over_view_condition_label": over_view_condition,
+            "over_view_temp_label": over_view_temp
+        }
 
     def _create_preciptation_section(self, parent):
         precip = ctk.CTkFrame(parent, fg_color="#3f3f3f")
@@ -154,6 +174,11 @@ class WeatherOutput(ctk.CTkFrame):
                                    font=ctk.CTkFont(size=20, weight="normal"))
         snow_chance.grid(row=1, padx=(30, 20),  pady=(0, 10))
 
+        return {
+            "rain_chance_label": rain_chance,
+            "snow_chance_label": snow_chance
+        }
+
     def _create_sun_section(self, parent):
         sun_info = ctk.CTkFrame(parent, fg_color="#575757")
         sun_info.grid(row=3, columnspan=3, column=1, pady=(10, 0))
@@ -170,6 +195,11 @@ class WeatherOutput(ctk.CTkFrame):
         sun_set = ctk.CTkLabel(sun_info, text="5:56 pm",
                                font=ctk.CTkFont(size=20, weight="normal"))
         sun_set.grid(row=1, column=1, padx=(0, 40), pady=(0, 10))
+
+        return {
+            "sun_rise_time_label": sun_rise,
+            "sun_set_time_label": sun_set
+        }
 
     def _create_other_section(self, parent):
         other_info = ctk.CTkFrame(parent, fg_color="#3f3f3f")
@@ -212,6 +242,12 @@ class WeatherOutput(ctk.CTkFrame):
                                         font=ctk.CTkFont(size=20, weight="normal"))
         uv_index_content.grid(row=1, padx=(15, 15))
 
+        return {
+            "dew_point_content": dew_point_content,
+            "humidity_content": humidity_content,
+            "uv_index_content": uv_index_content
+        }
+
     def _create_wind_section(self, parent):
         wind_info = ctk.CTkFrame(parent, fg_color="#575757")
         wind_info.grid(row=5, columnspan=3, column=1, pady=(10, 0))
@@ -250,6 +286,20 @@ class WeatherOutput(ctk.CTkFrame):
                                       font=ctk.CTkFont(size=10, weight="normal"))
         gust_speed_mph.grid(row=0, column=1)
 
+        return {
+            "wind_direction": wind_direction,
+            "wind_speed": wind_speed,
+            "gust_speed": gust_speed
+        }
+
+    # def _check_selected_tab(self):
+    #     selected_tab = self.weather_tabview.get_selected_tab_text()
+    #     for day, widgets in self.forecast_tabs:
+    #         if day == selected_tab:
+    #             self._update_forecast_weather_widget(widgets, day)
+    #             break
+    #     self.after(1000, self._check_selected_tab)
+
     def _update_forecast_weather_widget(self):
         if self.forecast is None and 'data' not in self.forecast and len(self.forecast['data']) == 0:
             print('Something went wrong when entering location')
@@ -263,7 +313,55 @@ class WeatherOutput(ctk.CTkFrame):
         
         self.temp.configure(text=new_current_min_max)
 
+        # Iterate over each day's forecast and update the corresponding tab
+        for i, daily_data in enumerate(self.forecast['data']):
+            if i < len(self.forecast_tabs):
+                day, tab_widgets = self.forecast_tabs[i]
+                self._update_tab_data(tab_widgets, day, daily_data)
 
+    def _update_tab_data(self, widgets, day, daily_data):
+        # Update the widgets for the selected day
 
+        ## Coverting Date
+        date_str = daily_data['datetime']
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        # formatted_date = date_obj.strftime("%A %b %-dth")
 
+        # Handling the suffix for the day
+        day = date_obj.day
+        if 4 <= day <= 20 or 24 <= day <= 30:
+            suffix = "th"
+        else:
+            suffix = ["st", "nd", "rd"][day % 10 - 1]
 
+        final_formatted_date = date_obj.strftime("%A %b %-d") + suffix
+
+        ## Convertin Time
+        timestamp_rise = daily_data['sunrise_ts']
+        timestamp_set = daily_data['sunset_ts']
+        time_rise = datetime.fromtimestamp(int(timestamp_rise)).strftime("%H:%M")
+        time_set = datetime.fromtimestamp(int(timestamp_set)).strftime("%H:%M")
+
+        ## updating widgets
+        ## Overview
+        widgets["over_view_date_label"].configure(text=final_formatted_date)
+        widgets["over_view_condition_label"].configure(text=daily_data['weather']['description'])
+        widgets["over_view_temp_label"].configure(text=f"H:{daily_data['max_temp']}°F  L:{daily_data['min_temp']}°F")
+
+        ## Precip
+        widgets["rain_chance_label"].configure(text=str(daily_data['pop']) + '%')
+        widgets["snow_chance_label"].configure(text=str(daily_data['snow']) + '"')
+
+        ## sunrise and sunset
+        widgets["sun_rise_time_label"].configure(text=f'{time_rise} am')
+        widgets["sun_set_time_label"].configure(text=f'{time_set} pm')
+
+        ## Dew, Hum, uv
+        widgets["dew_point_content"].configure(text=str(daily_data['dewpt']) + '°F')
+        widgets["humidity_content"].configure(text=str(daily_data['rh']) + '%')
+        widgets["uv_index_content"].configure(text=str(daily_data['uv']))
+
+        ## wind
+        widgets["wind_direction"].configure(text=str(daily_data['wind_cdir']))
+        widgets["wind_speed"].configure(text=str(daily_data['wind_spd']))
+        widgets["gust_speed"].configure(text=str(daily_data['wind_gust_spd']))

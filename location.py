@@ -227,7 +227,15 @@ class LocationInput(ctk.CTkFrame):
             # set the current weather equal to the returned data
             self.weather_output_instance.set_current(current=self.current_weather)
             self.weather_output_instance.set_forecast(forecast=self.weather_forecast)
-            
+
+    def _bind_tab_change_event(self):
+        self.weather_tabview.bind("<NotebookTabChanged>", self._on_tab_change)
+
+    def _on_tab_change(self, event):
+        # Get the selected tab index
+        selected_tab_index = self.weather_tabview.index("current")
+        self._update_forecast_for_selected_tab(selected_tab_index)
+    
 
     def validate_coordinates_input(self):
         lat = self.lat_entry.get().strip()

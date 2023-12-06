@@ -17,8 +17,8 @@ class Sidebar(ctk.CTkFrame):
 
         # menu bar buttons
         self.sidebar_button_1 = ctk.CTkButton(self, 
-                                                text="Step by step",
-                                                command=self.sidebar_button_event,
+                                                text="Home",
+                                                command=lambda: self.sidebar_button_event("Home"),
                                                 fg_color="#a688fa",
                                                 text_color="#121212",
                                                 font=ctk.CTkFont(size=12, weight="bold"),
@@ -30,8 +30,8 @@ class Sidebar(ctk.CTkFrame):
                                         pady=10
                                         )
         self.sidebar_button_2 = ctk.CTkButton(self, 
-                                                text="Help",
-                                                command=self.sidebar_button_event,
+                                                text="Step by Step",
+                                                command=lambda: self.sidebar_button_event("Step by step"),
                                                 fg_color="#a688fa",
                                                 text_color="#121212",
                                                 font=ctk.CTkFont(size=12, weight="bold"),

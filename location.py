@@ -165,7 +165,9 @@ class LocationInput(ctk.CTkFrame):
                                     hover_color="#9171f8",
                                     border_color="white",
                                     border_width=1,
-                                    font=ctk.CTkFont(size=12, weight="bold"))
+                                    font=ctk.CTkFont(size=12, weight="bold"),
+                                    command=self.clear_input_fields
+                                    )
         redo_button.grid(row=0, column=1, padx=(15, 15), pady=0, sticky="w")
 
         submit_button = ctk.CTkButton(button_frame, 
@@ -176,6 +178,16 @@ class LocationInput(ctk.CTkFrame):
                                       border_width=1,
                                       font=ctk.CTkFont(size=12, weight="bold"))
         submit_button.grid(row=0, column=2, padx=0, pady=0, sticky="e")
+
+    def clear_input_fields(self):
+        # Clear the contents of each input field
+        self.city_entry.delete(0, 'end')
+        self.code_entry.delete(0, 'end')
+        self.country_entry.delete(0, 'end')
+        self.lat_entry.delete(0, 'end')
+        self.long_entry.delete(0, 'end')
+        # Also hide the error message frame if visible
+        self.error_msg_frame.grid_remove()
 
 #### Validation Code and Calls to microservice ###
 
